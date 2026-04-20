@@ -60,39 +60,34 @@ python3 -m pip install -e .
 Validate a CSV and print a human-readable summary:
 
 ```bash
-cm-csv-validator /path/to/file.csv
+cm-csv-validator /path/to/input_export.csv
 ```
 
-Write a machine-readable JSON report:
+Optional for automation: write a structured report file or print JSON to stdout.
 
 ```bash
-cm-csv-validator /path/to/file.csv --report validation-report.json
-```
-
-Print JSON to stdout:
-
-```bash
-cm-csv-validator /path/to/file.csv --json
+cm-csv-validator /path/to/input_export.csv --report validation-report.json
+cm-csv-validator /path/to/input_export.csv --json
 ```
 
 Run without installing:
 
 ```bash
-PYTHONPATH=src python3 -m cm_csv_validator /path/to/file.csv
+PYTHONPATH=src python3 -m cm_csv_validator /path/to/input_export.csv
 ```
 
 Repair a known Microsoft Graph export shape and emit CM-ready shards:
 
 ```bash
-cm-csv-repair --source microsoft-graph /path/to/messages_raw.csv --output-dir repaired
+cm-csv-repair --source microsoft-graph /path/to/graph_export.csv --output-dir repaired
 ```
 
 The intended flow is:
 
 ```bash
-cm-csv-validator /path/to/messages_raw.csv
-cm-csv-repair --source microsoft-graph /path/to/messages_raw.csv --output-dir repaired
-cm-csv-validator repaired/messages_raw_cm_ready_part001.csv
+cm-csv-validator /path/to/graph_export.csv
+cm-csv-repair --source microsoft-graph /path/to/graph_export.csv --output-dir repaired
+cm-csv-validator repaired/graph_export_cm_ready_part001.csv
 ```
 
 ## Exit Codes
@@ -106,3 +101,4 @@ cm-csv-validator repaired/messages_raw_cm_ready_part001.csv
 - The validator reports likely source-column matches when required CM columns are missing.
 - Duplicate-content warnings are diagnostic. A file can still fail or pass independently of those warnings depending on the fatal checks.
 - The repair command is source-specific and intentionally conservative. If the source data is missing required values or is damaged beyond recovery, the tool may drop rows and report that it did so.
+- The `--report` and `--json` options are optional. They are useful for scripted pipelines or CI checks, but not required for normal interactive use.
