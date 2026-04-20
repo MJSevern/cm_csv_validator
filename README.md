@@ -97,7 +97,7 @@ cm-csv-validator repaired/graph_export_cm_ready_part001.csv
 
 ## Notes
 
-- This project is meant for customer-owned CSV files. Do not commit customer CSVs into the repository.
+- This project is meant for customer-owned CSV files.
 - The validator reports likely source-column matches when required CM columns are missing.
 - Duplicate-content warnings are diagnostic. A file can still fail or pass independently of those warnings depending on the fatal checks.
 - The repair command is source-specific and intentionally conservative. If the source data is missing required values or is damaged beyond recovery, the tool may drop rows and report that it did so.
