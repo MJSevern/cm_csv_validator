@@ -51,6 +51,24 @@ The validator checks:
 
 ## Install
 
+Clone the repo, move into it, then install the CLI:
+
+```bash
+git clone https://github.com/MJSevern/cm_csv_validator.git
+cd cm_csv_validator
+python3 -m pip install -e .
+```
+
+If you do not want to install the CLI, you can run it directly from the repo root:
+
+```bash
+git clone https://github.com/MJSevern/cm_csv_validator.git
+cd cm_csv_validator
+PYTHONPATH=src python3 -m cm_csv_validator /path/to/input_export.csv
+```
+
+If you are already in the cloned repo, this is the only install command you need:
+
 ```bash
 python3 -m pip install -e .
 ```
