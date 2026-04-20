@@ -8,6 +8,17 @@ It is intentionally narrow:
 - it does not scrub or rewrite fields
 - it validates an existing CSV and reports exactly what is wrong when the file is not upload-ready
 
+The project also includes a source-specific repair command for known export-shape problems.
+
+Important scope boundary:
+
+- the repair command only fixes concrete data issues such as encoding, malformed CSV row stitching, field remapping, recipient delimiter normalization, deterministic CM-safe IDs, timestamp normalization, and file splitting
+- it can also apply narrow source-specific cleanup like dropping duplicate source IDs, removing known banner markers, and truncating overlong bodies to CM-safe byte bounds when the adapter has explicit rules for them
+- it does not guarantee semantic cleanup
+- it does not infer missing business data that is not present in the source
+- it does not resolve arbitrary corrupt exports
+- it does not remove duplicate business content unless a source-specific repair rule explicitly does so
+
 ## What It Checks
 
 The validator checks:
@@ -70,6 +81,20 @@ Run without installing:
 PYTHONPATH=src python3 -m cm_csv_validator /path/to/file.csv
 ```
 
+Repair a known Microsoft Graph export shape and emit CM-ready shards:
+
+```bash
+cm-csv-repair --source microsoft-graph /path/to/messages_raw.csv --output-dir repaired
+```
+
+The intended flow is:
+
+```bash
+cm-csv-validator /path/to/messages_raw.csv
+cm-csv-repair --source microsoft-graph /path/to/messages_raw.csv --output-dir repaired
+cm-csv-validator repaired/messages_raw_cm_ready_part001.csv
+```
+
 ## Exit Codes
 
 - `0`: file is ready for upload
@@ -80,3 +105,4 @@ PYTHONPATH=src python3 -m cm_csv_validator /path/to/file.csv
 - This project is meant for customer-owned CSV files. Do not commit customer CSVs into the repository.
 - The validator reports likely source-column matches when required CM columns are missing.
 - Duplicate-content warnings are diagnostic. A file can still fail or pass independently of those warnings depending on the fatal checks.
+- The repair command is source-specific and intentionally conservative. If the source data is missing required values or is damaged beyond recovery, the tool may drop rows and report that it did so.
